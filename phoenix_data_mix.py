@@ -4,13 +4,13 @@ import os
 from pathlib import Path
 
 DATA_ROOT="/media/kevin/seagate_ssd/phoenix2014-release/phoenix-2014-multisigner"
+RESULT_ROOT="./data"
 
 TRAIN_CORPUS_CSV  = DATA_ROOT+"/annotations/manual/train.corpus.csv"
 TRAIN_ALIGNMENT   = DATA_ROOT+"/annotations/automatic/train.alignment"
 TRAINCLASSES_TXT  = DATA_ROOT+"/annotations/automatic/trainingClasses.txt"
 
 TRAIN_DATA        = DATA_ROOT+"/features/fullFrame-256x256px/train"
-RESULT_ROOT="./data"
 
 class PhoenixDataMix:
     # no class variables
@@ -81,49 +81,64 @@ class PhoenixDataMix:
 
         # 첫 번째 리스트에서 해당 위치 이후의 항목들을 가져와서 '3'인 항목들을 제외하고 추가합니다.
         result.extend(item for item in first_list[index_to_insert:] if item[-2] != s_idx)
-        #print("inside of make_mixed_list")
-        #print(len(result))
+
         return result
+
+    def check_dir_exists(self, dir_name):
+        if Path(dir_name).exists():
+            print(f"{dir_name} exists")
+            return True
+        else:
+            print(f"{dir_name} doesn't exist")
+            return False
 
     def mix(self, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
         print("create directory : " + dir_name)
         result_file_dir = RESULT_ROOT+ "/" + dir_name
-        Path(result_file_dir).mkdir(parents=True, exist_ok=True)
+
+        try:
+            Path(result_file_dir).mkdir(parents=True, exist_ok=True)
+        except FileExistsError:
+            print(f"{result_file_dir} already exists!")
+            return False
+
         filename = self.get_filename_first_part(s_id) # need to add "_pid0_fn000000-0.png"
-        print(s_id)
-        print(filename)
+
         source_dir = TRAIN_DATA + "/" + s_id
         target_dir = TRAIN_DATA + "/" + t_id
 
-        if Path(source_dir).exists():
-            print("source directory exists")
+        if self.check_dir_exists(source_dir) and self.check_dir_exists(target_dir):
+            print(f"mix {source_dir} and {target_dir}")
         else:
-            print("source directory doesn't exist")
-        if Path(target_dir).exists():
-            print("target directory exists")
-        else:
-            print("target source directory doesn't exist")
+            return False
 
         result = self.make_mixed_list(s_id, s_idx, t_id, t_idx)
-        #print(len(result))
 
         for i, row in enumerate(result):
             formatted_i = "_pid0_fn{:06}-0.png".format(i)
             symbolic_file = filename+formatted_i
-            #row.append(filename+formatted_i)
             row.append(symbolic_file)
             source_file = source_dir + "/1/" + row[0]
             target_file = target_dir + "/1/" + row[0]
+
             if row[4] == 's':
                 final_src_file = source_file
             else:
                 final_src_file = target_file
+
+            src_link = Path(final_src_file)
+            dst_link = Path(result_file_dir+"/"+row[5])
+
             if Path(final_src_file).exists():
                 print("good")
+                dst_link.symlink_to(src_link)
                 print(i, row)
             else:
                 print(f"{final_src_file} doesn't exist")
                 print(i, row)
+                return False
+
+        return True
 
     def print_id_files(self, id):
         #print(len(self.master_dict[id]['files']))

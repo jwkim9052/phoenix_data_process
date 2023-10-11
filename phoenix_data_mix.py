@@ -129,6 +129,8 @@ class PhoenixDataMix:
 
             if Path(final_src_file).exists():
                 print("good")
+                if dst_link.exists():
+                    dst_link.unlink()
                 dst_link.symlink_to(src_link)
                 print(i, row)
             else:
@@ -276,4 +278,23 @@ class PhoenixDataMix:
                 else:
                     prev_signstate = afile[2]
 
+    def insert_annotation_index2(self, annotation_list, files_list):
+        annotation_index_map = {}
+        for idx, item in enumerate(annotation_list):
+            if item not in annotation_index_map:
+                annotation_index_map[item] = []
+            annotation_index_map[item].append(idx)
+
+        prev_signstate = ""
+        for afile in files_list:
+            if afile[2] == "si":
+                afile.append('-1')
+            else:
+                if afile[2] in annotation_index_map and annotation_index_map[afile[2]]:
+                    index = annotation_index_map[afile[2]].pop(0)
+                    afile.append(index)
+
+                    if prev_signstate and prev_signstate != afile[2] and not annotation_index_map[prev_signstate]:
+                        del annotation_index_map[prev_signstate]
+                    prev_signstate = afile[2]
 

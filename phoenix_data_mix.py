@@ -3,17 +3,16 @@ import copy
 import os
 from pathlib import Path
 
-DATA_ROOT="/media/kevin/seagate_ssd/phoenix2014-release/phoenix-2014-multisigner"
-RESULT_ROOT="./data"
-
-TRAIN_CORPUS_CSV  = DATA_ROOT+"/annotations/manual/train.corpus.csv"
-TRAIN_ALIGNMENT   = DATA_ROOT+"/annotations/automatic/train.alignment"
-TRAINCLASSES_TXT  = DATA_ROOT+"/annotations/automatic/trainingClasses.txt"
-
-TRAIN_DATA        = DATA_ROOT+"/features/fullFrame-256x256px/train"
-
 class PhoenixDataMix:
-    # no class variables
+    # class variables
+    DATA_ROOT="/media/kevin/seagate_ssd/phoenix2014-release/phoenix-2014-multisigner"
+    RESULT_ROOT="./data"
+
+    TRAIN_CORPUS_CSV  = DATA_ROOT+"/annotations/manual/train.corpus.csv"
+    TRAIN_ALIGNMENT   = DATA_ROOT+"/annotations/automatic/train.alignment"
+    TRAINCLASSES_TXT  = DATA_ROOT+"/annotations/automatic/trainingClasses.txt"
+
+    TRAIN_DATA        = DATA_ROOT+"/features/fullFrame-256x256px/train"
 
     def __init__(self):
         self.train_corpus_dict = {}
@@ -31,7 +30,6 @@ class PhoenixDataMix:
         self.make_master_dict()
 
         for key in self.master_dict:
-            #print(key)
             #print(self.master_dict[key]['annotation'])
             self.insert_annotation_index(self.master_dict[key]['annotation'], self.master_dict[key]['files'])
 
@@ -94,7 +92,7 @@ class PhoenixDataMix:
 
     def mix(self, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
         print("create directory : " + dir_name)
-        result_file_dir = RESULT_ROOT+ "/" + dir_name
+        result_file_dir = self.RESULT_ROOT+ "/" + dir_name
 
         try:
             Path(result_file_dir).mkdir(parents=True, exist_ok=True)
@@ -104,8 +102,8 @@ class PhoenixDataMix:
 
         filename = self.get_filename_first_part(s_id) # need to add "_pid0_fn000000-0.png"
 
-        source_dir = TRAIN_DATA + "/" + s_id
-        target_dir = TRAIN_DATA + "/" + t_id
+        source_dir = self.TRAIN_DATA + "/" + s_id
+        target_dir = self.TRAIN_DATA + "/" + t_id
 
         if self.check_dir_exists(source_dir) and self.check_dir_exists(target_dir):
             print(f"mix {source_dir} and {target_dir}")
@@ -163,7 +161,7 @@ class PhoenixDataMix:
     # self.train_corpus_dict = {}
     def make_train_corpus(self):
         # Open the CSV file
-        with open(TRAIN_CORPUS_CSV, 'r') as file:
+        with open(self.TRAIN_CORPUS_CSV, 'r') as file:
             #reader = csv.reader(file, delimiter='|', quotechar='"')
             reader = csv.reader(file, delimiter='|')
             # Skip the header
@@ -199,7 +197,7 @@ class PhoenixDataMix:
     # Total 3694 classes in the trainingClasses.txt
 
     def make_glossClass(self):
-        with open(TRAINCLASSES_TXT, 'r') as file:
+        with open(self.TRAINCLASSES_TXT, 'r') as file:
             reader = csv.reader(file, delimiter=' ')
             # Skip the header
             next(reader)
@@ -225,7 +223,7 @@ class PhoenixDataMix:
     def make_master_dict(self):
 
         num = 0
-        with open(TRAIN_ALIGNMENT, 'r') as file:
+        with open(self.TRAIN_ALIGNMENT, 'r') as file:
             for line in file:
                 #if num > 300:
                 #    break

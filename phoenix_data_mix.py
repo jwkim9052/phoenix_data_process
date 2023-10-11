@@ -4,17 +4,18 @@ import os
 from pathlib import Path
 
 class PhoenixDataMix:
-    # class variables
-    DATA_ROOT="/media/kevin/seagate_ssd/phoenix2014-release/phoenix-2014-multisigner"
-    RESULT_ROOT="./data"
+    # no class variables
 
-    TRAIN_CORPUS_CSV  = DATA_ROOT+"/annotations/manual/train.corpus.csv"
-    TRAIN_ALIGNMENT   = DATA_ROOT+"/annotations/automatic/train.alignment"
-    TRAINCLASSES_TXT  = DATA_ROOT+"/annotations/automatic/trainingClasses.txt"
+    def __init__(self, data_root, result_root):
+        self.DATA_ROOT=data_root
+        self.RESULT_ROOT=result_root
 
-    TRAIN_DATA        = DATA_ROOT+"/features/fullFrame-256x256px/train"
+        self.TRAIN_CORPUS_CSV  = self.DATA_ROOT+"/annotations/manual/train.corpus.csv"
+        self.TRAIN_ALIGNMENT   = self.DATA_ROOT+"/annotations/automatic/train.alignment"
+        self.TRAINCLASSES_TXT  = self.DATA_ROOT+"/annotations/automatic/trainingClasses.txt"
 
-    def __init__(self):
+        self.TRAIN_DATA        = self.DATA_ROOT+"/features/fullFrame-256x256px/train"
+
         self.train_corpus_dict = {}
         self.glossClass_dict = {}
         self.reversed_glossClass_dict = {}
@@ -197,6 +198,8 @@ class PhoenixDataMix:
     #AACHEN2 5
     #
     # Total 3694 classes in the trainingClasses.txt
+    #
+    # glossClass_dict = { 'A' : [ 0, 1, 2 ], 'AACHEN' : [3, 4, 5],.....}
 
     def make_glossClass(self):
         with open(self.TRAINCLASSES_TXT, 'r') as file:
@@ -256,6 +259,7 @@ class PhoenixDataMix:
 
         #print(self.master_dict['01April_2010_Thursday_heute_default-0'])
 
+    # 조잡해 보이지만 잘 작동한다.
     def insert_annotation_index(self, annotation_list, files_list):
         tmp_annotation_list = annotation_list.copy()
 
@@ -276,25 +280,5 @@ class PhoenixDataMix:
                         tmp_annotation_list[prev_index] = ""
                         prev_signstate = afile[2]
                 else:
-                    prev_signstate = afile[2]
-
-    def insert_annotation_index2(self, annotation_list, files_list):
-        annotation_index_map = {}
-        for idx, item in enumerate(annotation_list):
-            if item not in annotation_index_map:
-                annotation_index_map[item] = []
-            annotation_index_map[item].append(idx)
-
-        prev_signstate = ""
-        for afile in files_list:
-            if afile[2] == "si":
-                afile.append('-1')
-            else:
-                if afile[2] in annotation_index_map and annotation_index_map[afile[2]]:
-                    index = annotation_index_map[afile[2]].pop(0)
-                    afile.append(index)
-
-                    if prev_signstate and prev_signstate != afile[2] and not annotation_index_map[prev_signstate]:
-                        del annotation_index_map[prev_signstate]
                     prev_signstate = afile[2]
 

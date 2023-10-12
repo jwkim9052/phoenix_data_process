@@ -92,7 +92,7 @@ class PhoenixDataMix:
             return False
 
     def mix(self, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
-        print("create directory : " + dir_name)
+        print("creating directory : " + dir_name)
         result_file_dir = self.RESULT_ROOT+ "/" + dir_name
 
         try:
@@ -142,13 +142,30 @@ class PhoenixDataMix:
                 if dst_link.exists():
                     dst_link.unlink()
                 dst_link.symlink_to(src_link)
-                print(i, row)
+                #print(i, row)
             else:
                 print(f"{final_src_file} doesn't exist")
                 print(i, row)
                 return False
 
+        #self.print_mix_result(result, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss)
+        self.write_mix_result(result, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss)
+
         return True
+
+    def print_mix_result(self, result, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
+        print(f" Directory : {dir_name}\n S ID : {s_id}\n S Index : {s_idx}\n")
+        print(f" T ID : {t_id}\n T Index : {t_idx}\n")
+        for row in result:
+            print(row)
+
+    def write_mix_result(self, result, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
+        logfile=self.RESULT_ROOT+"/"+dir_name+".txt"
+        with open(logfile, 'w') as wfile:
+            wfile.write(f"Directory : {dir_name}\nS ID : {s_id}\nS Index : {s_idx}\n")
+            wfile.write(f"T ID : {t_id}\nT Index : {t_idx}\n")
+            for row in result:
+                wfile.write(' '.join(str(e) for e in row)+'\n')
 
     def print_id_files(self, id):
         #print(len(self.master_dict[id]['files']))

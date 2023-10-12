@@ -31,5 +31,5 @@ res = phoenix.mix("data03", '06January_2010_Wednesday_tagesschau_default-12', 4,
 phoenix.print_id_files('06May_2010_Thursday_heute_default-9') # __OFF__ 2 - 6 png 
 
 
-res = phoenix.mix("data04", '06May_2010_Thursday_heute_default-9', 2, '__OFF__', 
+res = phoenix.mix("data04", '06May_2010_Thursday_heute_default-9', 2, '__OFF__',  # 2 -> 3
             '06January_2010_Wednesday_tagesschau_default-10', 5, '__OFF__')

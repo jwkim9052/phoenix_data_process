@@ -96,7 +96,7 @@ class PhoenixDataMix:
         result_file_dir = self.RESULT_ROOT+ "/" + dir_name
 
         try:
-            Path(result_file_dir).mkdir(parents=True, exist_ok=True)
+            Path(result_file_dir).mkdir(parents=True, exist_ok=False)
         except FileExistsError:
             print(f"{result_file_dir} already exists!")
             return False
@@ -109,6 +109,15 @@ class PhoenixDataMix:
         if self.check_dir_exists(source_dir) and self.check_dir_exists(target_dir):
             print(f"mix {source_dir} and {target_dir}")
         else:
+            return False
+
+        s_ann_list = self.get_annotation_list(s_id)
+        t_ann_list = self.get_annotation_list(t_id)
+        if s_ann_list[s_idx] != s_gloss:
+            print(f"s_gloss : {s_gloss} is not index {s_idx}")
+            return False
+        if t_ann_list[t_idx] != t_gloss:
+            print(f"t_gloss : {t_gloss} is not index {t_idx}")
             return False
 
         result = self.make_mixed_list(s_id, s_idx, t_id, t_idx)
@@ -129,7 +138,7 @@ class PhoenixDataMix:
             dst_link = Path(result_file_dir+"/"+row[5])
 
             if Path(final_src_file).exists():
-                print("good")
+                #print("good")
                 if dst_link.exists():
                     dst_link.unlink()
                 dst_link.symlink_to(src_link)
@@ -185,6 +194,8 @@ class PhoenixDataMix:
                     break
 
         #print(self.train_corpus_dict['id'])
+    def get_annotation_list(self, id):
+        return self.train_corpus_dict[id]['annotation_list']
 
     # trainingClasses.txt
     #

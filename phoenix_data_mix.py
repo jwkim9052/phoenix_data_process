@@ -198,7 +198,8 @@ class PhoenixDataMix:
 
             # Loop through each row in the CSV
             for row in reader:
-                parts = row[0].split('|')
+                #parts = row[0].split('|') # data has "contents"
+                parts=row
 
                 if len(parts) == 4:
                     annotation_list = parts[3].split()

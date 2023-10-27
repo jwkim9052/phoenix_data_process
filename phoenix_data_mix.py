@@ -93,7 +93,8 @@ class PhoenixDataMix:
 
     def mix(self, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
         print("creating directory : " + dir_name)
-        result_file_dir = self.RESULT_ROOT+ "/" + dir_name
+        #result_file_dir = self.RESULT_ROOT+ "/" + dir_name
+        result_file_dir = self.RESULT_ROOT+ "/" + dir_name +"/1"
 
         try:
             Path(result_file_dir).mkdir(parents=True, exist_ok=False)

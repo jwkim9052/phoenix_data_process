@@ -6,12 +6,14 @@ data_root="/media/kevin/seagate_ssd/phoenix2014-release/phoenix-2014-multisigner
 result_root="./data"
 phoenix = PhoenixDataMix(data_root, result_root)
 
-res = phoenix.mix("data01", '01February_2011_Tuesday_heute_default-5', 3, 'MINUS', 
-            '01December_2011_Thursday_tagesschau_default-7', 5, 'MINUS')
-if res:
-    print("mix done!")
-else:
-    print("mix failed!")
+#res = phoenix.mix("data01", '01February_2011_Tuesday_heute_default-5', 3, 'MINUS', 
+#            '01December_2011_Thursday_tagesschau_default-7', 5, 'MINUS')
+#if res:
+#    print("mix done!")
+#else:
+#    print("mix failed!")
+
+phoenix.pick_one('dir_name', '01February_2011_Tuesday_heute_default-5', 3)
 
 ########################################################################################
 #print("=================================================")

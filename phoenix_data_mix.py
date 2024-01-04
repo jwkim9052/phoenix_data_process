@@ -154,6 +154,33 @@ class PhoenixDataMix:
 
         return True
 
+    def pick_one(self, dir_name, id, idx):
+        result_file_dir = self.RESULT_ROOT+ "/" + dir_name
+        try:
+            Path(result_file_dir).mkdir(parents=True, exist_ok=True)
+        except FileExistsError:
+            print(f"{result_file_dir} already exists!")
+            return False
+
+        source_dir = self.TRAIN_DATA + "/" + id + "/1/"
+
+        one_gloss_list = self.get_partial_list(id, idx)
+        for row in one_gloss_list:
+            print(row)
+            final_src_file = source_dir + row[0]
+            src_link = Path(final_src_file)
+            dst_link = Path(result_file_dir+"/"+row[0])
+
+            if Path(final_src_file).exists():
+                if dst_link.exists():
+                    dst_link.unlink()
+                dst_link.symlink_to(src_link)
+            else:
+                print(f"{final_src_file} doesn't exist")
+                return False
+
+        return True
+
     def print_mix_result(self, result, dir_name, s_id, s_idx, s_gloss, t_id, t_idx, t_gloss):
         print(f" Directory : {dir_name}\n S ID : {s_id}\n S Index : {s_idx}\n")
         print(f" T ID : {t_id}\n T Index : {t_idx}\n")

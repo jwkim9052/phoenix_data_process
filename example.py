@@ -13,7 +13,13 @@ phoenix = PhoenixDataMix(data_root, result_root)
 #else:
 #    print("mix failed!")
 
+phoenix.pick_one('dir_name', '01February_2011_Tuesday_heute_default-5', 1)
 phoenix.pick_one('dir_name', '01February_2011_Tuesday_heute_default-5', 3)
+phoenix.pick_one('dir_name', '06June_2010_Sunday_tagesschau_default-2', 10)
+phoenix.pick_one('dir_name', '06June_2010_Sunday_tagesschau_default-2', 11)
+phoenix.pick_one('dir_name', '06June_2010_Sunday_tagesschau_default-2', 12)
+phoenix.pick_one('dir_name', '06June_2010_Sunday_tagesschau_default-2', 13)
+#phoenix.print_id_files('06June_2010_Sunday_tagesschau_default-2')
 
 ########################################################################################
 #print("=================================================")

@@ -200,6 +200,7 @@ class PhoenixDataMix:
         print("id is : " + id)
         for i, row in enumerate(self.master_dict[id]['files']):
             print(i, row)
+        print(self.train_corpus_dict[id]['annotation_list'])
 
     def make_report_train_alignment(self):
         with open("jwkim_train.alignment", 'w') as wfile:
@@ -308,6 +309,7 @@ class PhoenixDataMix:
 
                     if id not in self.master_dict:
                         annotation_list = self.train_corpus_dict[id]['annotation_list']
+                        annotation_idx  = list(range(len(annotation_list)))
                         self.master_dict[id] = {'annotation' : annotation_list, 'files' : []}
                     self.master_dict[id]['files'].append([filename, classlabel, signstate])
                 else:
@@ -316,8 +318,44 @@ class PhoenixDataMix:
 
         #print(self.master_dict['01April_2010_Thursday_heute_default-0'])
 
-    # 조잡해 보이지만 잘 작동한다.
+    # 조잡해 보이지만 잘 작동한다. 중복된consecuitive signstate가 문제여서 더 조잡해졌다.
     def insert_annotation_index(self, annotation_list, files_list):
+        tmp_annotation_list = annotation_list.copy()
+
+        prev_signstate = ""
+        prev_signclass = 0
+        # signstate = afile[2]
+        # signclass = afile[1]
+        # example
+        #['06June_2010_Sunday_tagesschau.avi_pid0_fn000175-0.png', '2534', 'REGEN', 10]
+        for afile in files_list:
+            if afile[2] == "si":
+                afile.append('-1')
+            else:
+                #print(tmp_annotation_list)
+                index = tmp_annotation_list.index(afile[2])
+                #original_index = annotation_list.index(afile[2])
+                #afile.append(index)
+
+                if prev_signstate:
+                    if prev_signstate != afile[2] or prev_signclass > int(afile[1].strip()):
+                        #del tmp_annotation_list[0]
+                        prev_index = tmp_annotation_list.index(prev_signstate)
+                        tmp_annotation_list[prev_index] = ""
+                        prev_signstate = afile[2]
+                        prev_signclass = 0
+                        index = tmp_annotation_list.index(afile[2])
+                        afile.append(index)
+                    else:
+                        afile.append(index)
+                        prev_signclass = int(afile[1])
+                else:
+                    afile.append(index)
+                    prev_signstate = afile[2]
+                    prev_signclass = int(afile[1])
+
+    # 조잡해 보이지만 잘 작동한다. orignal problem one
+    def insert_annotation_index2(self, annotation_list, files_list):
         tmp_annotation_list = annotation_list.copy()
 
         prev_signstate = ""
